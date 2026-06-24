@@ -34,7 +34,6 @@ pipeline {
       }
     }
 
-    # ✅ NEW STAGE (Webhook Proof)
     stage('Webhook Trigger Check') {
       steps {
         echo "🔥 Jenkins triggered by GitHub webhook successfully!"
@@ -110,7 +109,7 @@ pipeline {
 
             git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
 
-            git commit -m "Updated image tag ${BUILD_NUMBER}" || echo "No changes to commit"
+            git commit -m "Updated image tag ${BUILD_NUMBER}" || echo "No changes"
 
             git push https://${GITHUB_TOKEN}@github.com/Manav015/Jenkins-Zero-To-Hero.git HEAD:main || echo "Nothing to push"
 
@@ -123,8 +122,8 @@ pipeline {
 
   post {
     always {
-      echo "✅ Pipeline execution completed successfully"
-      echo "📊 Build Number: ${BUILD_NUMBER}"
+      echo "Pipeline execution completed successfully"
+      echo "Build Number: ${BUILD_NUMBER}"
     }
   }
 }
