@@ -8,14 +8,14 @@ pipeline {
 
   environment {
     DOCKER_IMAGE = "manavdhruve15/ultimate-cicd:${BUILD_NUMBER}"
-    GIT_REPO_NAME = "Jenkins-Zero-To-Hero"
-    GIT_USER_NAME = "Manav015"
+    GIT_REPO = "https://github.com/Manav015/Jenkins-Zero-To-Hero.git"
+    GIT_USER = "Manav015"
     SONAR_URL = "http://18.221.210.34:9000/"
   }
 
   stages {
 
-    stage('Install Dependencies') {
+    stage('Install Tools') {
       steps {
         sh '''
           apt-get update
@@ -34,7 +34,10 @@ pipeline {
 
     stage('Verify Workspace') {
       steps {
-        sh 'ls -ltr'
+        sh '''
+          pwd
+          ls -la
+        '''
       }
     }
 
@@ -62,10 +65,10 @@ pipeline {
 
     stage('Build Docker Image') {
       steps {
-        sh """
+        sh '''
           cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
           docker build -t $DOCKER_IMAGE .
-        """
+        '''
       }
     }
 
@@ -85,19 +88,25 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
           sh '''
-            git config user.email "manavdhruve15@gmail.com"
-            git config user.name "Manav Dhruve"
+            git config --global user.email "manavdhruve15@gmail.com"
+            git config --global user.name "Manav Dhruve"
 
             sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
 
             git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
 
-            git commit -m "Updated image tag ${BUILD_NUMBER}" || echo "No changes"
+            git commit -m "Updated image tag ${BUILD_NUMBER}" || echo "No changes to commit"
 
-            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+            git push https://${GITHUB_TOKEN}@github.com/Manav015/Jenkins-Zero-To-Hero.git HEAD:main
           '''
         }
       }
+    }
+  }
+
+  post {
+    always {
+      echo "Pipeline completed"
     }
   }
 }
