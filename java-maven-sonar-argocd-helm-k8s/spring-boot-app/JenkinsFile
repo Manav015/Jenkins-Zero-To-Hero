@@ -10,13 +10,11 @@ pipeline {
     skipDefaultCheckout(false)
   }
 
-  stages {
-
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
-    }
+ stage('Checkout') {
+  steps {
+    git branch: 'main', url: 'https://github.com/Manav015/Jenkins-Zero-To-Hero.git'
+  }
+}
 
     stage('Build and Test') {
       steps {
